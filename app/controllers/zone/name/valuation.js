@@ -42,9 +42,23 @@ module.exports = function zoneNameValuationController(req, res) {
 
   const body = {};
   const name = req.params.name.toLowerCase();
+  var exists = false;
+  var zone = null;
+  var error = false;
 
   const onError = (err) => { logger.error(err); res.status(500).send('oopsie') };
   const onFinished = () => {
+      if (!exists){
+          res.status(418).send({
+              error: "zone does not exists."
+          });
+          return;
+      }else if (error){
+          res.status(418).send({
+              error: "the name of the zone matches more than one zone."
+          });
+          return;
+      }
       for (var operation in body){
           for (var type in body[operation]){
               var values = body[operation][type];
@@ -64,7 +78,29 @@ module.exports = function zoneNameValuationController(req, res) {
   };
 
   const filter = datasource.filter( property => {
-      return property.county.toLowerCase() == name || property.area.toLowerCase() == name || property.province.toLowerCase() == name;
+      var ret = false;
+      if (property.county.toLowerCase() == name){
+          if (zone != null && zone != "county"){
+              error = true;
+          }
+          ret = true;
+      }
+      if (property.area.toLowerCase() == name){
+          if (zone != null && zone != "area"){
+              error = true;
+          }
+          ret = true;
+      }
+      if (property.county.toLowerCase() == name){
+          if (zone != null && zone != "county"){
+              error = true;
+          }
+          ret = true;
+      }
+      if (!exists && ret){
+          exists = true;
+      }
+      return ret;
   });
 
   filter.subscribe((property) => {
