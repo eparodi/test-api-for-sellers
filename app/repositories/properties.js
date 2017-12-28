@@ -45,7 +45,7 @@ function readFile(filename) {
   });
 
   parser.on('finish', function () {
-    logger.debug({ msg: 'finished loading file', filename: filename });
+    logger.debug({filename: filename}, 'finished loading file');
     subject.onCompleted();
   });
 

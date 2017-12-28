@@ -13,7 +13,7 @@ const controller = commons.controller;
 const router = new express.Router({ caseSensitive: false });
 
 // generator - insert routes here
-router.get('zone/:name/valuation', controller('zone/name/valuation'));
+router.get('/zone/:name/valuation', controller('zone/name/valuation'));
 router.get('/properties', controller('properties'));
 commons.logger.debug('router initialized');
 
